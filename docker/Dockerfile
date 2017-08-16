@@ -10,6 +10,9 @@ RUN wget -O /var/lib/clamav/main.cvd http://database.clamav.net/main.cvd \
 
 ADD ./*.conf /etc/clamav/
 
+# copy the needed files (temporarily into root)
+COPY readiness.sh .
+COPY eicar.com .
 COPY start.sh .
 
 CMD ["/start.sh"]
