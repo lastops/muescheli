@@ -10,8 +10,9 @@ $ docker build -t clamav docker
 $ docker run -p 3310:3310 clamav
 ```
 
-run the webservice (requires a go installation)
+run the webservice (requires a go installation with dep)
 ```bash
+$ dep ensure
 $ go run main.go
 ```
 
