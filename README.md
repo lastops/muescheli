@@ -20,6 +20,10 @@ run a test
 ```bash
 $ curl -i -X POST -H "Content-Type: multipart/form-data" -F "file1=@test/eicar.com" -F "file2=@test/test.txt"  http://localhost:8091/scan
 ```
+or
+```bash
+$ curl -v -i -X POST --data-binary @test/eicar.com http://localhost:8091/scan
+```
 
 ## run on kubernetes
 
