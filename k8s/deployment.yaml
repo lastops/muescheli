@@ -1,0 +1,52 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: muescheli
+spec:
+  template:
+    metadata:
+      name: muescheli
+      labels:
+        app: muescheli
+    spec:
+      imagePullSecrets:
+        - name: monoregistry
+      containers:
+      - name: muescheli
+        image: monostream/muescheli:latest
+        imagePullPolicy: Always
+        env:
+        - name: HOST
+          value: localhost
+        - name: PORT
+          value: '3310'
+        ports:
+        - containerPort: 8091
+          name: api
+          protocol: TCP
+      - name: clamd
+        image: monostream/clamav:latest
+        ports:
+        - containerPort: 3310
+          name: api
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /readiness.sh
+          initialDelaySeconds: 90
+          timeoutSeconds: 10
+          periodSeconds: 300
+          failureThreshold: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: muescheli
+spec:
+  selector:
+    app: muescheli
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8091
