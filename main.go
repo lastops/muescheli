@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"fmt"
+	"time"
 	"bytes"
 	"net/http"
 	"io/ioutil"
@@ -76,28 +77,36 @@ func scan(r io.Reader) string {
 }
 
 func main() {
-	// get clamd address
+	// muescheli port
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
-		port = "3310"
+		port = "8091"
 	}
-	host := os.Getenv("HOST")
-	if len(host) == 0 {
-		host = "localhost"
-	}
-	clamAddress = "tcp://" + host + ":" + port
 
-	// test if clamd is around
-	test := clamd.NewClamd(clamAddress)
-	ping := test.Ping()
-	if ping != nil {
-		fmt.Printf("can't connect to clamd on %v\n", clamAddress)
-		os.Exit(1)
+	// get clamd address
+	clamd_port := os.Getenv("CLAMD_PORT")
+	if len(clamd_port) == 0 {
+		clamd_port = "3310"
 	}
-	fmt.Printf("connection to clamd successful on %v\n", clamAddress)
+	clamd_host := os.Getenv("CLAMD_HOST")
+	if len(clamd_host) == 0 {
+		clamd_host = "localhost"
+	}
+	clamAddress = "tcp://" + clamd_host + ":" + clamd_port
+
+	// wait for clamd
+	test := clamd.NewClamd(clamAddress)
+	fmt.Printf("waiting for clamd on %v\n", clamAddress)
+	// TODO remove this hack and make nice function to handle resiliency not only on startup
+	// use Version() and not Ping() because of nil pointer dereference that Ping() can cause
+	for _, err := test.Version(); err != nil; _, err = test.Version() {
+		fmt.Printf(".")
+		time.Sleep(time.Second)
+	}
+	fmt.Printf("\nconnection to clamd successful on %v\n", clamAddress)
 
 	// define handler
 	http.HandleFunc("/scan", handler)
 	// listen on port
-	http.ListenAndServe(":8091", nil)
+	http.ListenAndServe(":" + port, nil)
 }
