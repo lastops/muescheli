@@ -3,7 +3,6 @@ package main
 import (
 	"io"
 	"io/ioutil"
-	"os"
 	"fmt"
 	"log"
 	"bytes"
@@ -43,14 +42,14 @@ func (a *App) Run(addr string) {
 	handler = handlers.ProxyHeaders(handler)
 	handler = handlers.CompressHandler(handler)
 
-	os.Stdout.WriteString("muescheli is ready and available on port " + strings.TrimPrefix(addr, ":"))
+	fmt.Printf("muescheli is ready and available on port %s\n", strings.TrimPrefix(addr, ":"))
 	log.Fatal(http.ListenAndServe(addr, handler))
 }
 
 func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/scan", auth(a.scanHttpUrl)).Methods(http.MethodGet)
-	a.Router.HandleFunc("/scan", auth(a.scanBody)).Methods(http.MethodPut)
 	a.Router.HandleFunc("/scan", auth(a.scanMultipart)).Methods(http.MethodPost)
+	a.Router.HandleFunc("/scan", auth(a.scanBody)).Methods(http.MethodPut)
+	a.Router.Path("/scan").Queries("url", "{url}").HandlerFunc(auth(a.scanHttpUrl)).Methods(http.MethodGet)
 }
 
 func checkCredentials(username string, password string) bool {
@@ -62,7 +61,7 @@ func auth(handler http.HandlerFunc) http.HandlerFunc {
 		user, pass, _ := r.BasicAuth()
 
 		if !checkCredentials(user, pass) {
-			http.Error(w, "Unauthorized.", 401)
+			respondWithJSONError(w, http.StatusUnauthorized,"Unauthorized", "wrong credentials")
 			return
 		}
 
@@ -73,24 +72,28 @@ func auth(handler http.HandlerFunc) http.HandlerFunc {
 func (a *App) scanMultipart(w http.ResponseWriter, r *http.Request) {
 	scanResult := ScanResult{}
 
-	// if multipart form than get files from form
+	// read multipart
 	reader, err := r.MultipartReader()
-	if err == nil {
-		// copy parts
-		for {
-			part, err := reader.NextPart()
-			if err == io.EOF {
-				break
-			}
+	defer r.Body.Close()
+	if err != nil {
+		respondWithUserError(w, err.Error())
+		return
+	}
 
-			// check if file and scan
-			if part.FileName() != "" {
-				result := a.scan(part)
-				// write result
-				fileResult := FileResult{part.FileName(), result }
-				scanResult = append(scanResult, fileResult)
-				fmt.Printf("scanned: %v, %v\n", part.FileName(), result)
-			}
+	// copy parts
+	for {
+		part, err := reader.NextPart()
+		if err == io.EOF {
+			break
+		}
+
+		// check if file and scan
+		if part.FileName() != "" {
+			result := a.scan(part)
+			// write result
+			fileResult := FileResult{part.FileName(), result }
+			scanResult = append(scanResult, fileResult)
+			fmt.Printf("scanned: %v, %v\n", part.FileName(), result)
 		}
 	}
 
@@ -100,7 +103,12 @@ func (a *App) scanMultipart(w http.ResponseWriter, r *http.Request) {
 func (a *App) scanBody(w http.ResponseWriter, r *http.Request) {
 	scanResult := ScanResult{}
 
-	buf, _ := ioutil.ReadAll(r.Body)
+	buf, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		respondWithServerError(w, err)
+		return
+	}
 	part := ioutil.NopCloser(bytes.NewBuffer(buf))
 	result := a.scan(part)
 	// write result
@@ -112,7 +120,37 @@ func (a *App) scanBody(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
-	respondWithJSONError(w, http.StatusNotImplemented,"not implemented", "feature still to come...")
+	scanResult := ScanResult{}
+
+	// get url parameter from request
+	vars := mux.Vars(r)
+	url := vars["url"]
+	defer r.Body.Close()
+
+	// download url
+	response, err := http.Get(url)
+	if err != nil {
+		respondWithServerError(w, err)
+		return
+	}
+	defer response.Body.Close()
+	// read response
+	download, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		respondWithServerError(w, err)
+		return
+	}
+	fmt.Printf("size of download from %s: %d\n", url, len(download))
+
+	// create buffer and scan
+	part := ioutil.NopCloser(bytes.NewBuffer(download))
+	result := a.scan(part)
+	// write result
+	fileResult := FileResult{ "download", result }
+	scanResult = append(scanResult, fileResult)
+	fmt.Printf("scanned: %v, %v\n", "download", result)
+
+	respondWithJSON(w, http.StatusOK, scanResult)
 }
 
 func (a *App) scan(r io.Reader) string {
@@ -126,11 +164,11 @@ func (a *App) scan(r io.Reader) string {
 }
 
 func respondWithUserError(w http.ResponseWriter, description string) {
-	respondWithJSONError(w, http.StatusBadRequest, "", description)
+	respondWithJSONError(w, http.StatusBadRequest, "Bad Request", description)
 }
 
 func respondWithServerError(w http.ResponseWriter, error error) {
-	respondWithJSONError(w, http.StatusInternalServerError, "", error.Error())
+	respondWithJSONError(w, http.StatusInternalServerError, "Internal Server Error", error.Error())
 }
 
 func respondWithJSONError(w http.ResponseWriter, code int, error string, description string) {
