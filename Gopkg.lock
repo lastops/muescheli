@@ -7,9 +7,27 @@
   packages = ["."]
   revision = "b970184f4d9e88ff402581ec3dd3b9d074cfb90c"
 
+[[projects]]
+  name = "github.com/gorilla/context"
+  packages = ["."]
+  revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
+  version = "v1.1"
+
+[[projects]]
+  name = "github.com/gorilla/handlers"
+  packages = ["."]
+  revision = "a4043c62cc2329bacda331d33fc908ab11ef0ec3"
+  version = "v1.2.1"
+
+[[projects]]
+  name = "github.com/gorilla/mux"
+  packages = ["."]
+  revision = "bcd8bc72b08df0f70df986b97f95590779502d31"
+  version = "v1.4.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6d565002a9a2af555327a35b973166b0b4d3cc082fa045bd3917e34205a70a05"
+  inputs-digest = "ba934f988689508e7dc4a11efc95ee1caab71cb5e6c386afe907e3edb2780de2"
   solver-name = "gps-cdcl"
   solver-version = 1
