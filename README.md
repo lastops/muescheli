@@ -18,11 +18,15 @@ $ go run main.go
 
 run a test
 ```bash
-$ curl -i -X POST -H "Content-Type: multipart/form-data" -F "file1=@test/eicar.com" -F "file2=@test/test.txt"  http://localhost:8091/scan
+$ curl -v -X POST -H "Content-Type: multipart/form-data" -F "file1=@test/eicar.com" -F "file2=@test/test.txt"  http://localhost:8091/scan
 ```
 or
 ```bash
-$ curl -v -i -X POST --data-binary @test/eicar.com http://localhost:8091/scan
+$ curl -v -X PUT --data-binary @test/eicar.com http://localhost:8091/scan
+```
+or
+```bash
+$ curl -v http://localhost:8091/scan?url=https://tech.ebu.ch/docs/tech/tech3285.pdf
 ```
 
 ## run on kubernetes
