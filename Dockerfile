@@ -1,5 +1,7 @@
 FROM golang:1.8-alpine as builder
 
+RUN apk add --update --no-cache ca-certificates
+
 # build
 WORKDIR /go/src/github.com/monostream/muescheli/
 
@@ -15,6 +17,9 @@ FROM scratch
 
 WORKDIR /app/
 COPY --from=builder /app/ .
+
+# copy certificates so that files can be fetched from ssl sites
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 # setup environment
 ENV PATH "/app:${PATH}"
