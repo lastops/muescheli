@@ -129,11 +129,12 @@ func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
 
 	// download url
 	response, err := http.Get(url)
-	defer response.Body.Close()
 	if err != nil {
 		respondWithServerError(w, err)
 		return
 	}
+	defer response.Body.Close()
+
 	// file not found
 	if response.StatusCode != http.StatusOK {
 		respondWithUserError(w, "File not found")
