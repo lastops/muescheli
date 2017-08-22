@@ -24,3 +24,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/dutchcoders/go-clamd"
+
+[[constraint]]
+  name = "github.com/gorilla/mux"
+  version = "1.4.0"
