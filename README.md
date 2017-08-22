@@ -31,6 +31,12 @@ $ curl -v http://localhost:8091/scan?url=https://tech.ebu.ch/docs/tech/tech3285.
 
 ## run on kubernetes
 
+if you have the monostream [helm chart](https://github.com/monostream/helm-charts) repo installed
+```bash
+$ helm install monostream/muescheli
+```
+
+or manually deploy
 ```bash
 $ kubectl create -f k8s/deployment.yml
 ```
