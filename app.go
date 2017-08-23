@@ -50,6 +50,10 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/scan", auth(a.scanMultipart)).Methods(http.MethodPost)
 	a.Router.HandleFunc("/scan", auth(a.scanBody)).Methods(http.MethodPut)
 	a.Router.Path("/scan").Queries("url", "{url}").HandlerFunc(auth(a.scanHttpUrl)).Methods(http.MethodGet)
+
+	// endpoints to check if webservice is up
+	a.Router.HandleFunc("/liveness", a.livenessCheck).Methods(http.MethodGet)
+	a.Router.HandleFunc("/readiness", a.readinessCheck).Methods(http.MethodGet)
 }
 
 func checkCredentials(username string, password string) bool {
@@ -157,6 +161,29 @@ func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("scanned: %v, %v\n", "download", result)
 
 	respondWithJSON(w, http.StatusOK, scanResult)
+}
+
+// used by kubernetes
+// if this fails kubernetes will restart the container
+func (a *App) livenessCheck(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
+}
+
+// used by kubernetes
+// if this fails kubernetes stops routing traffic to the container
+func (a *App) readinessCheck(w http.ResponseWriter, r *http.Request) {
+	if _, err := a.Clam.Version(); err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("can't connect to clamd"))
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
 }
 
 func (a *App) scan(r io.Reader) string {
