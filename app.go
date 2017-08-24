@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
 	"github.com/dutchcoders/go-clamd"
+	"github.com/rs/cors"
 )
 
 type FileResult struct {
@@ -35,12 +36,15 @@ func (a *App) Initialize(clamdAddress string) {
 func (a *App) Run(addr string) {
 	var handler http.Handler
 
-	handler = handlers.CORS(
-		handlers.AllowedOrigins([]string{"*"}),
-		handlers.AllowedHeaders([]string{http.MethodGet, http.MethodPost, http.MethodPut}))(a.Router)
-
+	handler = a.Router
 	handler = handlers.ProxyHeaders(handler)
 	handler = handlers.CompressHandler(handler)
+
+	handler = cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{http.MethodHead, http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
+		AllowCredentials: true,
+	}).Handler(handler)
 
 	fmt.Printf("muescheli is ready and available on port %s\n", strings.TrimPrefix(addr, ":"))
 	log.Fatal(http.ListenAndServe(addr, handler))
