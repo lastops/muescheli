@@ -9,5 +9,5 @@ if [ $http_proxy ]; then
     sed -i "s/#HTTPProxyPort 1234/HTTPProxyPort $port/g" /etc/clamav/freshclam.conf
 fi
 
-freshclam -d &
+freshclam -d --no-dns &
 clamd
