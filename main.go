@@ -8,7 +8,7 @@ func main() {
 	// muescheli port
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
-		port = "8091"
+		port = "8092"
 	}
 
 	// get clamd address
