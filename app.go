@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/dutchcoders/go-clamd"
 	log "github.com/sirupsen/logrus"
+	"os"
 )
 
 type FileResult struct {
@@ -60,7 +61,15 @@ func (a *App) initializeRoutes() {
 }
 
 func checkCredentials(username string, password string) bool {
-	return true
+	// check user
+	if value, ok := os.LookupEnv("MUESCHELI_USER"); !ok || value != username {
+		return false
+	}
+	// check password
+	if value, ok := os.LookupEnv("MUESCHELI_PASSWORD"); ok && value == password {
+		return true
+	}
+	return false
 }
 
 func auth(handler http.HandlerFunc) http.HandlerFunc {
