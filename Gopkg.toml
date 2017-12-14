@@ -23,7 +23,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/dutchcoders/go-clamd"
+  name = "github.com/monostream/go-clamd"
 
 [[constraint]]
   name = "github.com/gorilla/mux"

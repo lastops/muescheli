@@ -1,4 +1,4 @@
-FROM golang:1.8-alpine as builder
+FROM golang:1.9-alpine as builder
 
 RUN apk add --update --no-cache ca-certificates
 
@@ -24,4 +24,4 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifi
 # setup environment
 ENV PATH "/app:${PATH}"
 
-CMD ["./muescheli"]
+CMD ["muescheli"]
