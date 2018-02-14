@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"io"
 	"io/ioutil"
 	"bytes"
@@ -11,7 +12,6 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/monostream/go-clamd"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 type FileResult struct {
