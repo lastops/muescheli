@@ -15,13 +15,16 @@ RUN rm -r /go/src/
 
 FROM scratch
 
-WORKDIR /app/
-COPY --from=builder /app/ .
-
 # copy certificates so that files can be fetched from ssl sites
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 # setup environment
+WORKDIR /app/
 ENV PATH "/app:${PATH}"
+# add non-privileged user
+COPY passwd.minimal /etc/passwd
+USER nobody
+
+COPY --from=builder /app/ .
 
 CMD ["muescheli"]
