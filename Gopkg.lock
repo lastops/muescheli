@@ -26,6 +26,12 @@
   revision = "53ecd6e5f51f422e954b49b2813ce1542b8c2a4d"
 
 [[projects]]
+  name = "github.com/rs/cors"
+  packages = ["."]
+  revision = "7af7a1e09ba336d2ea14b1ce73bf693c6837dbf6"
+  version = "v1.2"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "f006c2ac4710855cf0f916dd6b77acf6b048dc6e"
@@ -43,15 +49,9 @@
   packages = ["unix","windows"]
   revision = "665f6529cca930e27b831a0d1dafffbe1c172924"
 
-[[projects]]
-  name = "github.com/rs/cors"
-  packages = ["."]
-  revision = "7af7a1e09ba336d2ea14b1ce73bf693c6837dbf6"
-  version = "v1.2"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b80e9a1ee8794c7cfcb8bc3124947d74b7fe7186ea479589f3a335a0905ba9cc"
+  inputs-digest = "ef72cbabe8fbaec72c85b3b02b7807e49e64bb8817e3dee9e8dc30dcd79d2ef5"
   solver-name = "gps-cdcl"
   solver-version = 1
