@@ -1,12 +1,16 @@
 #!/bin/sh
 
+
+# --------------------------------------------------------------------------- #
+# removed: fails on bad internet connectivity and cause unnecessary restarts
+# --------------------------------------------------------------------------- #
 # freshclam
-if freshclam | grep -q 'bytecode.* is up to date'; then
-    echo "freshclam running successfully"
-else
-    echo "freshclam not running"
-    exit 1
-fi
+#if freshclam | grep -q 'bytecode.* is up to date'; then
+#    echo "freshclam running successfully"
+#else
+#    echo "freshclam not running"
+#    exit 1
+#fi
 
 # clamd
 if clamdscan eicar.com | grep -q 'Infected files: 1'; then

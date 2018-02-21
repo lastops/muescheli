@@ -2,9 +2,8 @@ package main
 
 import (
 	"io"
+	"os"
 	"io/ioutil"
-	"fmt"
-	"log"
 	"bytes"
 	"strings"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
 	"github.com/dutchcoders/go-clamd"
+	log "github.com/sirupsen/logrus"
 	"github.com/rs/cors"
 )
 
@@ -28,6 +28,10 @@ type App struct {
 }
 
 func (a *App) Initialize(clamdAddress string) {
+	// configure logging
+	Formatter := new(log.TextFormatter)
+	log.SetFormatter(Formatter)
+
 	a.Clam = clamd.NewClamd(clamdAddress)
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
@@ -46,7 +50,7 @@ func (a *App) Run(addr string) {
 		AllowCredentials: true,
 	}).Handler(handler)
 
-	fmt.Printf("muescheli is ready and available on port %s\n", strings.TrimPrefix(addr, ":"))
+	log.Printf("muescheli is ready and available on port %s", strings.TrimPrefix(addr, ":"))
 	log.Fatal(http.ListenAndServe(addr, handler))
 }
 
@@ -61,7 +65,15 @@ func (a *App) initializeRoutes() {
 }
 
 func checkCredentials(username string, password string) bool {
-	return true
+	// check user
+	if value, ok := os.LookupEnv("MUESCHELI_USER"); !ok || value != username {
+		return false
+	}
+	// check password
+	if value, ok := os.LookupEnv("MUESCHELI_PASSWORD"); ok && value == password {
+		return true
+	}
+	return false
 }
 
 func auth(handler http.HandlerFunc) http.HandlerFunc {
@@ -101,7 +113,7 @@ func (a *App) scanMultipart(w http.ResponseWriter, r *http.Request) {
 			// write result
 			fileResult := FileResult{part.FileName(), result }
 			scanResult = append(scanResult, fileResult)
-			fmt.Printf("scanned: %v, %v\n", part.FileName(), result)
+			log.Infof("scanned: %v, %v", part.FileName(), result)
 		}
 	}
 
@@ -122,7 +134,7 @@ func (a *App) scanBody(w http.ResponseWriter, r *http.Request) {
 	// write result
 	fileResult := FileResult{ "request body", result }
 	scanResult = append(scanResult, fileResult)
-	fmt.Printf("scanned: %v, %v\n", "request body", result)
+	log.Infof("scanned: %v, %v", "request body", result)
 
 	respondWithJSON(w, http.StatusOK, scanResult)
 }
@@ -154,7 +166,7 @@ func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
 		respondWithServerError(w, err)
 		return
 	}
-	fmt.Printf("size of download from %s: %d\n", url, len(download))
+	log.Infof("size of download from %s: %d", url, len(download))
 
 	// create buffer and scan
 	part := ioutil.NopCloser(bytes.NewBuffer(download))
@@ -162,7 +174,7 @@ func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
 	// write result
 	fileResult := FileResult{ "download", result }
 	scanResult = append(scanResult, fileResult)
-	fmt.Printf("scanned: %v, %v\n", "download", result)
+	log.Infof("scanned: %v, %v\n", "download", result)
 
 	respondWithJSON(w, http.StatusOK, scanResult)
 }
@@ -178,16 +190,17 @@ func (a *App) livenessCheck(w http.ResponseWriter, r *http.Request) {
 // used by kubernetes
 // if this fails kubernetes stops routing traffic to the container
 func (a *App) readinessCheck(w http.ResponseWriter, r *http.Request) {
-	if _, err := a.Clam.Version(); err != nil {
+	version, err := a.Clam.Version()
+	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("can't connect to clamd"))
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("ok"))
+	w.Write([]byte(version.Raw))
 }
 
 func (a *App) scan(r io.Reader) string {
