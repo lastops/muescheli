@@ -23,7 +23,7 @@
   branch = "master"
   name = "github.com/monostream/go-clamd"
   packages = ["."]
-  revision = "53ecd6e5f51f422e954b49b2813ce1542b8c2a4d"
+  revision = "fc0f6bc381c9d92f9fb2f5b27fafb9375b2d21a6"
 
 [[projects]]
   name = "github.com/rs/cors"
