@@ -16,14 +16,13 @@ RUN wget -O /var/lib/clamav/bytecode.cvd http://db.centraleu.clamav.net/bytecode
 RUN wget -nv -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64
 RUN chmod 755 /usr/local/bin/dumb-init
 
-ADD ./*.conf /etc/clamav/
-
 # setup environment
 ENV PATH "/app:${PATH}"
 WORKDIR /app/
 USER clamav
 
 # copy the needed files
+COPY *.conf /app/conf/
 COPY eicar.com .
 COPY *.sh /app/
 
