@@ -19,12 +19,15 @@ RUN chmod 755 /usr/local/bin/dumb-init
 # setup environment
 ENV PATH "/app:${PATH}"
 WORKDIR /app/
-USER clamav
 
 # copy the needed files
 COPY *.conf /app/conf/
 COPY eicar.com .
 COPY *.sh /app/
+
+# make sure app folder belongs to user
+RUN chown -R clamav:clamav /app
+USER clamav
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
 
