@@ -10,7 +10,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
-	"github.com/dutchcoders/go-clamd"
+	"github.com/monostream/go-clamd"
 	log "github.com/sirupsen/logrus"
 	"github.com/rs/cors"
 )

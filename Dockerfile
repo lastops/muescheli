@@ -1,4 +1,4 @@
-FROM golang:1.8-alpine as builder
+FROM golang:1.9-alpine as builder
 
 RUN apk add --update --no-cache ca-certificates
 
@@ -15,13 +15,16 @@ RUN rm -r /go/src/
 
 FROM scratch
 
-WORKDIR /app/
-COPY --from=builder /app/ .
-
 # copy certificates so that files can be fetched from ssl sites
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 # setup environment
+WORKDIR /app/
 ENV PATH "/app:${PATH}"
+# add non-privileged user
+COPY passwd.minimal /etc/passwd
+USER nobody
 
-CMD ["./muescheli"]
+COPY --from=builder /app/ .
+
+CMD ["muescheli"]

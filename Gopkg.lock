@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  name = "github.com/dutchcoders/go-clamd"
-  packages = ["."]
-  revision = "b970184f4d9e88ff402581ec3dd3b9d074cfb90c"
-
-[[projects]]
   name = "github.com/gorilla/context"
   packages = ["."]
   revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
@@ -24,6 +18,18 @@
   packages = ["."]
   revision = "bcd8bc72b08df0f70df986b97f95590779502d31"
   version = "v1.4.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/monostream/go-clamd"
+  packages = ["."]
+  revision = "fc0f6bc381c9d92f9fb2f5b27fafb9375b2d21a6"
+
+[[projects]]
+  name = "github.com/rs/cors"
+  packages = ["."]
+  revision = "7af7a1e09ba336d2ea14b1ce73bf693c6837dbf6"
+  version = "v1.2"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
@@ -43,15 +49,9 @@
   packages = ["unix","windows"]
   revision = "665f6529cca930e27b831a0d1dafffbe1c172924"
 
-[[projects]]
-  name = "github.com/rs/cors"
-  packages = ["."]
-  revision = "7af7a1e09ba336d2ea14b1ce73bf693c6837dbf6"
-  version = "v1.2"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b9c829a305442e87a5942a158bd4a04a405901b7121b37d4ab1ca4010e77fd0f"
+  inputs-digest = "ef72cbabe8fbaec72c85b3b02b7807e49e64bb8817e3dee9e8dc30dcd79d2ef5"
   solver-name = "gps-cdcl"
   solver-version = 1

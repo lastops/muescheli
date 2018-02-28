@@ -1,18 +1,34 @@
-FROM alpine:latest
+FROM alpine:3.7
 
-RUN apk --no-cache add ca-certificates clamav clamav-libunrar \
-    && mkdir /run/clamav \
-    && chown clamav:clamav /run/clamav
+RUN apk add --update --no-cache ca-certificates wget
 
-RUN wget -O /var/lib/clamav/main.cvd http://database.clamav.net/main.cvd \
-    && wget -O /var/lib/clamav/daily.cvd http://database.clamav.net/daily.cvd \
-    && wget -O /var/lib/clamav/bytecode.cvd http://database.clamav.net/bytecode.cvd
+# TEMPORARY: use edge repositories to get newest clam (to fix security issue)
+RUN apk add --update --no-cache --repository http://dl-4.alpinelinux.org/alpine/edge/main clamav clamav-libunrar && \
+    mkdir /run/clamav && \
+    chown clamav:clamav /run/clamav
 
-ADD ./*.conf /etc/clamav/
+# download virus definitions
+RUN wget -O /var/lib/clamav/main.cvd http://db.centraleu.clamav.net/main.cvd
+RUN wget -O /var/lib/clamav/daily.cvd http://db.centraleu.clamav.net/daily.cvd
+RUN wget -O /var/lib/clamav/bytecode.cvd http://db.centraleu.clamav.net/bytecode.cvd
 
-# copy the needed files (temporarily into root)
-COPY readiness.sh .
+# download dumb-init 1.2.1
+RUN wget -nv -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64
+RUN chmod 755 /usr/local/bin/dumb-init
+
+# setup environment
+ENV PATH "/app:${PATH}"
+WORKDIR /app/
+
+# copy the needed files
+COPY *.conf /app/conf/
 COPY eicar.com .
-COPY start.sh .
+COPY *.sh /app/
 
-CMD ["/start.sh"]
+# make sure app folder belongs to user
+RUN chown -R clamav:clamav /app
+USER clamav
+
+ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
+
+CMD ["start.sh"]

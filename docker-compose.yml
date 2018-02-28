@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+   clam:
+     build: ./docker
+     image: clamav
+     ports:
+       - "3310:3310"
+   web:
+     depends_on:
+       - clam
+     build: .
+     image: muescheli
+     ports:
+       - "8091:8091"
+     environment:
+       CLAMD_HOST: clam
+       CLAMD_PORT: 3310
+       MUESCHELI_USER: muescheli
+       MUESCHELI_PASSWORD: muescheli
