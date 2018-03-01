@@ -21,12 +21,14 @@ ENV PATH "/app:${PATH}"
 WORKDIR /app/
 
 # copy the needed files
-COPY *.conf /app/conf/
-COPY eicar.com .
-COPY *.sh /app/
+COPY ["*.conf", "/etc/clamav/"]
+COPY eicar.com ./
+COPY *.sh ./
 
 # make sure app folder belongs to user
-RUN chown -R clamav:clamav /app
+RUN chown -R clamav:clamav /app && \
+    chmod u+w /etc/clamav/*.conf
+
 USER clamav
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
