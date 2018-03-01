@@ -4,7 +4,7 @@
 path=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)")
 
 # clamd
-if clamdscan ${path}/eicar.com | grep -q 'Infected files: 1'; then
+if clamdscan --config-file=/app/conf/clamd.conf ${path}/eicar.com | grep -q 'Infected files: 1'; then
     echo "clamd running successfully"
     exit 0
 else

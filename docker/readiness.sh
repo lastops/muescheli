@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # freshclam
-if freshclam | grep -Eq 'bytecode.* is up to date|bytecode.* updated'; then
+if freshclam --config-file=/app/conf/freshclam.conf | grep -Eq 'bytecode.* is up to date|bytecode.* updated'; then
     echo "freshclam running successfully"
     exit 0
 else
