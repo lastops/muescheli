@@ -1,4 +1,4 @@
-# muescheli poc
+# muescheli
 
 small service that connects to a ClamAV daemon through tcp
 
@@ -41,5 +41,5 @@ or manually deploy
 $ kubectl create -f k8s/deployment.yml
 ```
 this will start a pod with 2 containers (clamav and muescheli)
-
+m
 muescheli service exposed through random NodePort port
