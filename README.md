@@ -4,6 +4,13 @@ small service that connects to a ClamAV daemon through tcp
 
 ## test locally
 
+use the `docker-compose.yml`
+```bash
+$ docker-compose up --build
+```
+
+*or*
+
 build ClamAV image and run
 ```bash
 $ docker build -t clamav docker
