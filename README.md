@@ -1,6 +1,7 @@
 # muescheli
+("müscheli" is swiss german for a small sea shell or clam)
 
-small service that connects to a ClamAV daemon through tcp
+**small service that connects to a ClamAV daemon through tcp**
 
 ## test locally
 
