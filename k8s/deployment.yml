@@ -6,6 +6,12 @@ metadata:
     app: muescheli
 spec:
   replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      # set to 0 to make sure that there is no downtime on a deployment update
+      maxUnavailable: 0
+    type: RollingUpdate
   template:
     metadata:
       labels:
