@@ -14,7 +14,7 @@ $ docker-compose up --build
 
 build ClamAV image and run
 ```bash
-$ docker build -t clamav clamav-image
+$ docker build -t clamav clamav
 $ docker run -p 3310:3310 clamav
 ```
 

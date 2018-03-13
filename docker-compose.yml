@@ -2,7 +2,7 @@ version: '3'
 
 services:
    clam:
-     build: clamav-image
+     build: clamav
      image: clamav
      ports:
        - "3310:3310"
