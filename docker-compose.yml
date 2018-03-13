@@ -2,7 +2,7 @@ version: '3'
 
 services:
    clam:
-     build: ./docker
+     build: clamav-image
      image: clamav
      ports:
        - "3310:3310"

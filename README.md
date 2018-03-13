@@ -14,7 +14,7 @@ $ docker-compose up --build
 
 build ClamAV image and run
 ```bash
-$ docker build -t clamav docker
+$ docker build -t clamav clamav-image
 $ docker run -p 3310:3310 clamav
 ```
 
@@ -49,5 +49,5 @@ or manually deploy
 $ kubectl create -f k8s/deployment.yml
 ```
 this will start a pod with 2 containers (clamav and muescheli)
-m
+
 muescheli service exposed through random NodePort port
