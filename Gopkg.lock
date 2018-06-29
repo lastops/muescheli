@@ -4,54 +4,63 @@
 [[projects]]
   name = "github.com/gorilla/context"
   packages = ["."]
-  revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
-  version = "v1.1"
+  revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
+  version = "v1.1.1"
 
 [[projects]]
   name = "github.com/gorilla/handlers"
   packages = ["."]
-  revision = "a4043c62cc2329bacda331d33fc908ab11ef0ec3"
-  version = "v1.2.1"
+  revision = "90663712d74cb411cbef281bc1e08c19d1a76145"
+  version = "v1.3.0"
 
 [[projects]]
   name = "github.com/gorilla/mux"
   packages = ["."]
-  revision = "bcd8bc72b08df0f70df986b97f95590779502d31"
-  version = "v1.4.0"
+  revision = "e3702bed27f0d39777b0b37b664b6280e8ef8fbf"
+  version = "v1.6.2"
 
 [[projects]]
   branch = "master"
-  name = "github.com/monostream/go-clamd"
+  name = "github.com/lastops/go-clamd"
   packages = ["."]
   revision = "fc0f6bc381c9d92f9fb2f5b27fafb9375b2d21a6"
 
 [[projects]]
   name = "github.com/rs/cors"
   packages = ["."]
-  revision = "7af7a1e09ba336d2ea14b1ce73bf693c6837dbf6"
-  version = "v1.2"
+  revision = "ca016a06a5753f8ba03029c0aa5e54afb1bf713f"
+  version = "v1.4.0"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "f006c2ac4710855cf0f916dd6b77acf6b048dc6e"
-  version = "v1.0.3"
+  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
+  version = "v1.0.5"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "9f005a07e0d31d45e6656d241bb5c0f2efd4bc94"
+  revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix","windows"]
-  revision = "665f6529cca930e27b831a0d1dafffbe1c172924"
+  packages = [
+    "unix",
+    "windows"
+  ]
+  revision = "a200a19cb90b19de298170992778b1fda7217bd6"
+
+[[projects]]
+  branch = "v2"
+  name = "gopkg.in/Graylog2/go-gelf.v2"
+  packages = ["gelf"]
+  revision = "4dbb9d7213480a8484c02610e3f51ecd9c506a71"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ef72cbabe8fbaec72c85b3b02b7807e49e64bb8817e3dee9e8dc30dcd79d2ef5"
+  inputs-digest = "db49684f14585affb458f46c2fd70ac7e0b7f0fc41af6f7ab18f6b4c4b06318d"
   solver-name = "gps-cdcl"
   solver-version = 1

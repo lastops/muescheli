@@ -1,3 +1,3 @@
 [submodule "clamav"]
 	path = clamav
-	url = https://github.com/monostream/clamav
+	url = https://github.com/lastops/clamav
