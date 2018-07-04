@@ -31,7 +31,7 @@ type App struct {
 var graylogAddr = os.Getenv("GRAYLOGADDR")
 var application = os.Getenv("APPLICATION")
 
-func logger(message) {
+func logger(source string, flavour string, result string) {
 
 	if len(graylogAddr) == 0 {
 		graylogAddr = "localhost:12201"
@@ -55,8 +55,10 @@ func logger(message) {
 	log.SetOutput(io.MultiWriter(os.Stderr, gelfWriter))
 
 	log.WithFields(log.Fields{
-		"application": application
-	}).Info(message)
+		"application": application,
+		"source":      source,
+		"flavour":     flavour,
+	}).Info(result)
 
 }
 
@@ -141,7 +143,7 @@ func (a *App) scanMultipart(w http.ResponseWriter, r *http.Request) {
 			// write result
 			fileResult := FileResult{part.FileName(), result}
 			scanResult = append(scanResult, fileResult)
-			logger("scanned: %v, %v", part.FileName(), result)
+			logger(part.FileName(), "file", result)
 		}
 	}
 
@@ -162,7 +164,7 @@ func (a *App) scanBody(w http.ResponseWriter, r *http.Request) {
 	// write result
 	fileResult := FileResult{"request body", result}
 	scanResult = append(scanResult, fileResult)
-	logger("scanned: %v, %v", "request body", result)
+	logger(string(buf), "request body", result)
 
 	respondWithJSON(w, http.StatusOK, scanResult)
 }
@@ -194,7 +196,7 @@ func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
 		respondWithServerError(w, err)
 		return
 	}
-	logger("size of download from %s: %d", url, len(download))
+	// log.Printf("size of download from %s: %d", url, len(download))
 
 	// create buffer and scan
 	part := ioutil.NopCloser(bytes.NewBuffer(download))
@@ -202,7 +204,7 @@ func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
 	// write result
 	fileResult := FileResult{"download", result}
 	scanResult = append(scanResult, fileResult)
-	logger("scanned: %v, %v\n", "download", result)
+	logger(url, "download", result)
 
 	respondWithJSON(w, http.StatusOK, scanResult)
 }
