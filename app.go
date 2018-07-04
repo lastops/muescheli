@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"flag"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/lastops/go-clamd"
@@ -29,32 +28,39 @@ type App struct {
 	Router *mux.Router
 }
 
-func (a *App) Initialize(clamdAddress string) {
-	// configure logging
+var graylogAddr = os.Getenv("GRAYLOGADDR")
+var application = os.Getenv("APPLICATION")
 
-	graylogAddr := os.Getenv("GRAYLOGADDR")
+func logger(message) {
+
 	if len(graylogAddr) == 0 {
 		graylogAddr = "localhost:12201"
 	}
 
-	flag.StringVar(&graylogAddr, "graylog", "", "graylog server addr")
-	flag.Parse()
-
-	if graylogAddr != "" {
-		// If using UDP
-		gelfWriter, err := gelf.NewUDPWriter(graylogAddr)
-		// If using TCP
-		//gelfWriter, err := gelf.NewTCPWriter(graylogAddr)
-		if err != nil {
-			log.Fatalf("gelf.NewWriter: %s", err)
-		}
-		// log to both stderr and graylog2
-		log.SetOutput(io.MultiWriter(os.Stderr, gelfWriter))
-		log.Printf("logging to stderr & graylog2@'%s'", graylogAddr)
+	if len(application) == 0 {
+		application = "av-dev"
 	}
 
-	Formatter := new(log.TextFormatter)
-	log.SetFormatter(Formatter)
+	// configure logging
+	log.SetFormatter(&log.JSONFormatter{})
+
+	// If using TCP
+	gelfWriter, err := gelf.NewTCPWriter(graylogAddr)
+	// If using UDP
+	//gelfWriter, err := gelf.NewUDPWriter(graylogAddr)
+	if err != nil {
+		log.Fatalf("gelf.NewWriter: %s", err)
+	}
+	// log to both stderr and graylog2
+	log.SetOutput(io.MultiWriter(os.Stderr, gelfWriter))
+
+	log.WithFields(log.Fields{
+		"application": application
+	}).Info(message)
+
+}
+
+func (a *App) Initialize(clamdAddress string) {
 
 	a.Clam = clamd.NewClamd(clamdAddress)
 	a.Router = mux.NewRouter()
@@ -135,7 +141,7 @@ func (a *App) scanMultipart(w http.ResponseWriter, r *http.Request) {
 			// write result
 			fileResult := FileResult{part.FileName(), result}
 			scanResult = append(scanResult, fileResult)
-			log.Infof("scanned: %v, %v", part.FileName(), result)
+			logger("scanned: %v, %v", part.FileName(), result)
 		}
 	}
 
@@ -156,7 +162,7 @@ func (a *App) scanBody(w http.ResponseWriter, r *http.Request) {
 	// write result
 	fileResult := FileResult{"request body", result}
 	scanResult = append(scanResult, fileResult)
-	log.Infof("scanned: %v, %v", "request body", result)
+	logger("scanned: %v, %v", "request body", result)
 
 	respondWithJSON(w, http.StatusOK, scanResult)
 }
@@ -188,7 +194,7 @@ func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
 		respondWithServerError(w, err)
 		return
 	}
-	log.Infof("size of download from %s: %d", url, len(download))
+	logger("size of download from %s: %d", url, len(download))
 
 	// create buffer and scan
 	part := ioutil.NopCloser(bytes.NewBuffer(download))
@@ -196,7 +202,7 @@ func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
 	// write result
 	fileResult := FileResult{"download", result}
 	scanResult = append(scanResult, fileResult)
-	log.Infof("scanned: %v, %v\n", "download", result)
+	logger("scanned: %v, %v\n", "download", result)
 
 	respondWithJSON(w, http.StatusOK, scanResult)
 }
