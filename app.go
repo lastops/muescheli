@@ -162,7 +162,7 @@ func (a *App) scanBody(w http.ResponseWriter, r *http.Request) {
 	part := ioutil.NopCloser(bytes.NewBuffer(buf))
 	result := a.scan(part)
 	// write result
-	fileResult := FileResult{"request body", result}
+	fileResult := FileResult{string(buf), result}
 	scanResult = append(scanResult, fileResult)
 	logger(string(buf), "request body", result)
 
@@ -202,7 +202,7 @@ func (a *App) scanHttpUrl(w http.ResponseWriter, r *http.Request) {
 	part := ioutil.NopCloser(bytes.NewBuffer(download))
 	result := a.scan(part)
 	// write result
-	fileResult := FileResult{"download", result}
+	fileResult := FileResult{url, result}
 	scanResult = append(scanResult, fileResult)
 	logger(url, "download", result)
 
