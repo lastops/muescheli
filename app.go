@@ -13,7 +13,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
+	// "strings"
 )
 
 type FileResult struct {
@@ -31,10 +31,10 @@ type App struct {
 var graylogAddr = os.Getenv("GRAYLOGADDR")
 var application = os.Getenv("APPLICATION")
 
-func logger(source string, flavour string, result string) {
+func logger(source string, kind string, result string) {
 
 	if len(graylogAddr) == 0 {
-		graylogAddr = "localhost:12201"
+		graylogAddr = "127.0.0.1:12201"
 	}
 
 	if len(application) == 0 {
@@ -55,9 +55,9 @@ func logger(source string, flavour string, result string) {
 	log.SetOutput(io.MultiWriter(os.Stderr, gelfWriter))
 
 	log.WithFields(log.Fields{
-		"application": application,
-		"source":      source,
-		"flavour":     flavour,
+		"app":    application,
+		"source": source,
+		"kind":   kind,
 	}).Info(result)
 
 }
@@ -82,7 +82,9 @@ func (a *App) Run(addr string) {
 		AllowCredentials: true,
 	}).Handler(handler)
 
-	log.Printf("muescheli is ready and available on port %s", strings.TrimPrefix(addr, ":"))
+	logger("system", "log", "muescheli is ready and available")
+	logger("system", "log", "logging to stderr & graylog2")
+
 	log.Fatal(http.ListenAndServe(addr, handler))
 }
 
