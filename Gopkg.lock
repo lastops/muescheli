@@ -2,65 +2,90 @@
 
 
 [[projects]]
+  digest = "1:dbbeb8ddb0be949954c8157ee8439c2adfd8dc1c9510eb44a6e58cb68c3dce28"
   name = "github.com/gorilla/context"
   packages = ["."]
+  pruneopts = ""
   revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
   version = "v1.1.1"
 
 [[projects]]
+  digest = "1:a1a1522a8c1fad5675ce8ec9de96f30b898df7c8c229928c35dbd8cf277e6d62"
   name = "github.com/gorilla/handlers"
   packages = ["."]
+  pruneopts = ""
   revision = "90663712d74cb411cbef281bc1e08c19d1a76145"
   version = "v1.3.0"
 
 [[projects]]
+  digest = "1:c2c8666b4836c81a1d247bdf21c6a6fc1ab586538ab56f74437c2e0df5c375e1"
   name = "github.com/gorilla/mux"
   packages = ["."]
+  pruneopts = ""
   revision = "e3702bed27f0d39777b0b37b664b6280e8ef8fbf"
   version = "v1.6.2"
 
 [[projects]]
   branch = "master"
+  digest = "1:c70eb1b99540b69b98bd8f366e6581e0f258a076d26187586969e0d8fff8f965"
   name = "github.com/lastops/go-clamd"
   packages = ["."]
+  pruneopts = ""
   revision = "fc0f6bc381c9d92f9fb2f5b27fafb9375b2d21a6"
 
 [[projects]]
+  digest = "1:275de36a5db8e4b182f5e6527123fc4f33f5b7f7304eb33e7d06072c5a4801c4"
   name = "github.com/rs/cors"
   packages = ["."]
+  pruneopts = ""
   revision = "ca016a06a5753f8ba03029c0aa5e54afb1bf713f"
   version = "v1.4.0"
 
 [[projects]]
+  digest = "1:8cf46b6c18a91068d446e26b67512cf16f1540b45d90b28b9533706a127f0ca6"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
+  pruneopts = ""
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
   version = "v1.0.5"
 
 [[projects]]
   branch = "master"
+  digest = "1:6ef14be530be39b6b9d75d54ce1d546ae9231e652d9e3eef198cbb19ce8ed3e7"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
+  pruneopts = ""
   revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
 
 [[projects]]
   branch = "master"
+  digest = "1:274e6fab68b7f298bf3f70bd60d4ba0c55284d1d2034175fb3324924268ccd9e"
   name = "golang.org/x/sys"
   packages = [
     "unix",
-    "windows"
+    "windows",
   ]
+  pruneopts = ""
   revision = "7138fd3d9dc8335c567ca206f4333fb75eb05d56"
 
 [[projects]]
   branch = "v2"
+  digest = "1:6566d10ac5fb1b08709ffc53cf3347843d76389b666a791f6b353e418f93b5e4"
   name = "gopkg.in/Graylog2/go-gelf.v2"
   packages = ["gelf"]
+  pruneopts = ""
   revision = "4dbb9d7213480a8484c02610e3f51ecd9c506a71"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "db49684f14585affb458f46c2fd70ac7e0b7f0fc41af6f7ab18f6b4c4b06318d"
+  input-imports = [
+    "github.com/gorilla/handlers",
+    "github.com/gorilla/mux",
+    "github.com/lastops/go-clamd",
+    "github.com/rs/cors",
+    "github.com/sirupsen/logrus",
+    "gopkg.in/Graylog2/go-gelf.v2/gelf",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
